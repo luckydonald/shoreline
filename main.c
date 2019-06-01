@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
 	unsigned int frontend_cnt = 0;
 	char* frontend_names[MAX_FRONTENDS];
 	bool handle_signals = true;
-	bool show_repo_url = true;
+	char* show_repo_url = "https://github.com/luckydonald/shoreline"; //TODO: REPO_URL_DEFAULT;
 
 	char* port = PORT_DEFAULT;
 	char* listen_address = LISTEN_DEFAULT;
@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
 	struct timespec before, after;
 	long long time_delta;
 
-	while((opt = getopt(argc, argv, "p:b:w:h:r:s:l:f:d?")) != -1) {
+	while((opt = getopt(argc, argv, "p:b:w:h:r:s:l:f:d")) != -1) {
 		switch(opt) {
 			case('p'):
 				port = optarg;
@@ -206,7 +206,7 @@ int main(int argc, char** argv) {
 				frontend_cnt++;
 				break;
 			case('d'):
-				show_repo_url = false;
+				show_repo_url = optarg;
 				break;
 			default:
 				show_usage(argv[0]);
@@ -284,7 +284,8 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	if((err = -getaddrinfo(listen_address, port, NULL, &addr_list))) {
+	if((err = -getaddrinfo(
+		, port, NULL, &addr_list))) {
 		fprintf(stderr, "Failed to resolve listen address '%s', %d => %s\n", listen_address, err, gai_strerror(-err));
 		goto fail_net;
 	}
@@ -305,7 +306,7 @@ int main(int argc, char** argv) {
 		llist_for_each(&fronts, cursor) {
 			front = llist_entry_get_value(cursor, struct frontend, list);
 			if(show_repo_url && frontend_can_draw_string(front)) {
-				frontend_draw_string(front, 0, 0, "https://github.com/TobleMiner/shoreline");
+				frontend_draw_string(front, 0, 0, show_repo_url);
 			}
 			if((err = frontend_update(front))) {
 				fprintf(stderr, "Failed to update frontend '%s', %d => %s, bailing out\n", front->def->name, err, strerror(-err));
