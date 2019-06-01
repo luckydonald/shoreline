@@ -128,7 +128,8 @@ int main(int argc, char** argv) {
 	unsigned int frontend_cnt = 0;
 	char* frontend_names[MAX_FRONTENDS];
 	bool handle_signals = true;
-	char* show_repo_url = "https://github.com/luckydonald/shoreline"; //TODO: REPO_URL_DEFAULT;
+	bool show_repo_url = false;
+	char* repo_url = "https://github.com/luckydonald/shoreline"; //TODO: REPO_URL_DEFAULT;
 
 	char* port = PORT_DEFAULT;
 	char* listen_address = LISTEN_DEFAULT;
@@ -206,7 +207,8 @@ int main(int argc, char** argv) {
 				frontend_cnt++;
 				break;
 			case('d'):
-				show_repo_url = optarg;
+				show_repo_url = true;
+				repo_url = optarg;
 				break;
 			default:
 				show_usage(argv[0]);
@@ -305,7 +307,7 @@ int main(int argc, char** argv) {
 		llist_for_each(&fronts, cursor) {
 			front = llist_entry_get_value(cursor, struct frontend, list);
 			if(show_repo_url && frontend_can_draw_string(front)) {
-				frontend_draw_string(front, 0, 0, show_repo_url);
+				frontend_draw_string(front, 0, 0, repo_url);
 			}
 			if((err = frontend_update(front))) {
 				fprintf(stderr, "Failed to update frontend '%s', %d => %s, bailing out\n", front->def->name, err, strerror(-err));
