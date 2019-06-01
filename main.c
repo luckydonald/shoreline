@@ -284,8 +284,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	if((err = -getaddrinfo(
-		, port, NULL, &addr_list))) {
+	if((err = -getaddrinfo(listen_address, port, NULL, &addr_list))) {
 		fprintf(stderr, "Failed to resolve listen address '%s', %d => %s\n", listen_address, err, gai_strerror(-err));
 		goto fail_net;
 	}
